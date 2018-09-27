@@ -16,7 +16,8 @@
     "xcode": "node-pre-gyp configure --debug -- -f xcode",
     "build:source": "node-pre-gyp install --build-from-source",
     "build:package": "node-pre-gyp configure build package",
-    "build:publish": "node-pre-gyp-github publish"
+    "build:publish": "node-pre-gyp-github publish",
+    "build:test": "node-pre-gyp install --fallback-to-build=false"
   },
   "gypfile": true,
   "name": "noble-mac",
