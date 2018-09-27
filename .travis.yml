@@ -1,13 +1,7 @@
 os:
   - osx
-matrix:
-  include:
-    - osx_image: xcode7.3
 language: node_js
 node_js:
-  - "6.14.2"
-  - "8"
-  - "stable"
   # node is latest
   - "node"
 before_install:
