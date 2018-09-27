@@ -39,8 +39,9 @@ jobs:
     - stage: deploy
       # Only build tags
       if: tag IS present
+      node_js:
+        - "stable"
       env:
-        - NODE_RUNTIME=node TARGET=8.6.0
         - NODE_RUNTIME=electron TARGET=2.0.0 DIST_URL=https://atom.io/download/atom-shell
       install:
         - yarn
