@@ -1,0 +1,49 @@
+os:
+  - osx
+matrix:
+  include:
+    - osx_image: xcode7.3
+language: node_js
+node_js:
+  - "6.14.2"
+  - "8"
+  - "stable"
+  # node is latest
+  - "node"
+before_install:
+# put local node-pre-gyp on PATH
+- export PATH=./node_modules/.bin/:$PATH
+# install node-gyp
+- npm install node-gyp -g
+# install node-pre-gyp-github
+- npm install -g node-pre-gyp-github
+# figure out if we should publish
+- PUBLISH_BINARY=false
+# if we are building a tag then publish
+- if [[ $TRAVIS_BRANCH == `git describe --tags --always HEAD` ]]; then PUBLISH_BINARY=true; fi;
+
+install:
+# ensure source install works
+- yarn build:source
+# test our module
+- yarn test
+
+before_script:
+# if publishing, do it
+- if [[ $PUBLISH_BINARY == true ]]; then yarn build:package; yarn build:publish; fi;
+# cleanup
+- node-pre-gyp clean
+- node-gyp clean
+
+script:
+# if publishing, test installing from remote
+- INSTALL_RESULT=0
+- if [[ $PUBLISH_BINARY == true ]]; then INSTALL_RESULT=$(yarn install --fallback-to-build=false > /dev/null)$? || true; fi;
+# if install returned non zero (errored) then we first unpublish and then call false so travis will bail at this line
+- if [[ $INSTALL_RESULT != 0 ]]; then echo "returned $INSTALL_RESULT";node-pre-gyp-github unpublish;false; fi
+# If success then we arrive here so lets clean up
+- node-pre-gyp clean
+
+after_success:
+# if success then query and display all published binaries
+- node-pre-gyp info
