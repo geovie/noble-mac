@@ -1,7 +1,13 @@
 os:
   - osx
+matrix:
+  include:
+    - osx_image: xcode7.3
 language: node_js
 node_js:
+  - "6.14.2"
+  - "8"
+  - "stable"
   # node is latest
   - "node"
 before_install:
@@ -29,12 +35,3 @@ before_script:
 # cleanup
 - node-pre-gyp clean
 - node-gyp clean
-
-script:
-# if publishing, test installing from remote
-- INSTALL_RESULT=0
-- if [[ $PUBLISH_BINARY == true ]]; then INSTALL_RESULT=$(yarn build:test > /dev/null)$? || true; fi;
-# if install returned non zero (errored) then we call false so travis will bail at this line
-- if [[ $INSTALL_RESULT != 0 ]]; then echo "returned $INSTALL_RESULT";false; fi
-# If success then we arrive here so lets clean up
-- node-pre-gyp clean
