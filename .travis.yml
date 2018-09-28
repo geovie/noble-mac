@@ -45,13 +45,19 @@ install:
   # build from source
   - yarn build:source
 
-#script:
-#  # Only build tags
-#  if: tag IS present
-#  install:
-#    - yarn global add node-pre-gyp node-pre-gyp-github@1.3.1
-#    - yarn build:source
-#    - node-pre-gyp configure --runtime=$RUNTIME --target=$TARGET --dist-url=$DIST_URL
-#    - node-pre-gyp build --runtime=$RUNTIME --target=$TARGET --dist-url=$DIST_URL
-#    - node-pre-gyp package --runtime=$RUNTIME --target=$TARGET --dist-url=$DIST_URL
-#    - node-pre-gyp-github publish
+script:
+  install:
+    - PUBLISH_BINARY=false
+    # if we are building a tag then publish
+    - if [[ $TRAVIS_BRANCH == `git describe --tags --always HEAD` ]]; then PUBLISH_BINARY=true; fi;
+    # but not on xcode7.3
+    - if [[ "$TRAVIS_OSX_IMAGE" == "xcode7.3" ]]; then PUBLISH_BINARY=false; fi
+    - >
+      if [ "$PUBLISH_BINARY" == true ]; then
+        yarn global add node-pre-gyp node-pre-gyp-github@1.3.1
+        yarn build:source
+        node-pre-gyp configure --runtime=$RUNTIME --target=$TARGET --dist-url=$DIST_URL
+        node-pre-gyp build --runtime=$RUNTIME --target=$TARGET --dist-url=$DIST_URL
+        node-pre-gyp package --runtime=$RUNTIME --target=$TARGET --dist-url=$DIST_URL
+        node-pre-gyp-github publish
+      fi
