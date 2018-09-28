@@ -21,7 +21,7 @@
   },
   "gypfile": true,
   "name": "noble-mac",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "author": "gv@timeular.com",
   "license": "MIT",
   "repository": {
